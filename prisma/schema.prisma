@@ -1,0 +1,182 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         Int      @id @default(autoincrement())
+  password   String
+  codigo     String   @unique
+  nombre     String
+  apellido   String
+  created_at DateTime @default(now())
+  role       UserRole @default(medico)
+  historiales Historial[]
+}
+
+model Paciente {
+  id           Int      @id @default(autoincrement())
+  nombre       String
+  apellido     String
+  genero       String
+  fechaNacimiento DateTime
+  direccion    String?
+  telefono     String?
+  created_at   DateTime @default(now())
+
+  consultas    Historial[]
+  resultados   Resultado[]
+  diagnosticos Diagnostico[]
+  signos       SignoPaciente[]      
+  sintomas     SintomaPaciente[] 
+}
+
+model Enfermedad {
+  id           Int      @id @default(autoincrement())
+  nombre       String
+  descripcion  String
+  causa        String?
+  created_at   DateTime @default(now())
+
+  diagnosticos Diagnostico[]
+  signos       SignoEnfermedad[]
+  sintomas     SintomaEnfermedad[]
+  pruebas      PruebaEnfermedad[]      // 
+}
+
+model Signo {
+  id           Int    @id @default(autoincrement())
+  nombre       String
+  descripcion  String
+  tipo         String  // vital, físico...
+  unidadMedida String?
+  rangoNormal  String?
+  created_at   DateTime @default(now())
+  enfermedades SignoEnfermedad[]
+  pacientes    SignoPaciente[]
+}
+
+model Sintoma {
+  id           Int    @id @default(autoincrement())
+  nombre       String
+  descripcion  String
+  gravedad     String 
+  created_at   DateTime @default(now())
+
+  enfermedades SintomaEnfermedad[]
+  pacientes    SintomaPaciente[]
+}
+
+model Diagnostico {
+  id           Int      @id @default(autoincrement())
+  pacienteId   Int
+  enfermedadId Int
+  created_at   DateTime @default(now())
+
+  paciente     Paciente    @relation(fields: [pacienteId], references: [id])
+  enfermedad   Enfermedad  @relation(fields: [enfermedadId], references: [id])
+}
+
+model Resultado {
+  id           Int      @id @default(autoincrement())
+  pacienteId   Int
+  pruebaId     Int
+  valor        String
+  created_at   DateTime @default(now())
+  observaciones String?
+
+  paciente     Paciente         @relation(fields: [pacienteId], references: [id])
+  prueba       Prueba         @relation(fields: [pruebaId], references: [id])
+}
+
+
+model Historial {
+  id           Int      @id @default(autoincrement())
+  pacienteId   Int
+  userId       Int
+  created_at DateTime @default(now())
+  observaciones String?
+
+  paciente     Paciente @relation(fields: [pacienteId], references: [id])
+  user         User     @relation(fields: [userId], references: [id])
+}
+
+model Prueba {
+  id           Int           @id @default(autoincrement())
+  nombre       String
+  descripcion  String
+  metodo       MetodoPrueba
+  unidadMedida String?
+  rangoNormal  String?
+  created_at DateTime @default(now())
+
+  enfermedades PruebaEnfermedad[]
+  resultados   Resultado[]
+}
+
+
+model SignoPaciente {
+  id         Int      @id @default(autoincrement())
+  pacienteId Int
+  signoId    Int
+  created_at DateTime @default(now())
+  paciente   Paciente @relation(fields: [pacienteId], references: [id])
+  signo      Signo    @relation(fields: [signoId], references: [id])
+  @@unique([pacienteId, signoId])
+}
+
+model SintomaPaciente {
+  id         Int      @id @default(autoincrement())
+  pacienteId Int
+  sintomaId  Int 
+  created_at DateTime @default(now())
+  paciente   Paciente @relation(fields: [pacienteId], references: [id])
+  sintoma    Sintoma  @relation(fields: [sintomaId], references: [id])
+  @@unique([pacienteId, sintomaId])
+}
+
+
+model SignoEnfermedad {
+  id           Int        @id @default(autoincrement())
+  signoId      Int
+  enfermedadId Int
+  signo        Signo      @relation(fields: [signoId], references: [id])
+  enfermedad   Enfermedad @relation(fields: [enfermedadId], references: [id])
+  @@unique([signoId, enfermedadId])
+
+}
+
+model SintomaEnfermedad {
+  id           Int        @id @default(autoincrement())
+  sintomaId    Int
+  enfermedadId Int
+  sintoma      Sintoma    @relation(fields: [sintomaId], references: [id])
+  enfermedad   Enfermedad @relation(fields: [enfermedadId], references: [id])
+  @@unique([sintomaId, enfermedadId])
+
+}
+
+model PruebaEnfermedad {
+  id           Int        @id @default(autoincrement())
+  pruebaId     Int
+  enfermedadId Int
+  prueba       Prueba     @relation(fields: [pruebaId], references: [id])
+  enfermedad   Enfermedad @relation(fields: [enfermedadId], references: [id])
+  @@unique([pruebaId, enfermedadId])
+
+}
+
+
+enum UserRole {
+  admin
+  medico
+}
+
+enum MetodoPrueba {
+  laboratorio
+  postmortem
+}
