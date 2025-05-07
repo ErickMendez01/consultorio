@@ -1,3 +1,4 @@
+import PacientHistory from "@/components/commons/diagnostico/PacientHistory"
 import { DashboardHeader } from "@/components/header"
 import { DashboardShell } from "@/components/shell"
 
@@ -16,7 +17,7 @@ export default async function DashboardPage() {
       </DashboardHeader>
 
       <div>
-        {/* <UserDisplayContent /> */}
+        <PacientHistory/> 
       </div>
     </DashboardShell>
   )

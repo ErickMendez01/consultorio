@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import TestsDisplayContent from "./pruebas/TestsDisplayContent"
-
+import MakeDiagnostic from "./MakeDiagnostic"
 
 export default function TeachersDisplayContent() {
   const [currentTab, setCurrentTab] = useState("Diagnostico")
@@ -11,7 +11,7 @@ export default function TeachersDisplayContent() {
   const renderTabContent = () => {
     switch (currentTab) {
       case "Diagnostico":
-        return <TestsDisplayContent />
+        return <MakeDiagnostic/>
       case "Pruebas":
         return <TestsDisplayContent />
       default:

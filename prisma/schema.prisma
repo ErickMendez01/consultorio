@@ -42,7 +42,6 @@ model Enfermedad {
   causa        String?
   created_at   DateTime @default(now())
 
-  diagnosticos Diagnostico[]
   signos       SignoEnfermedad[]
   sintomas     SintomaEnfermedad[]
   pruebas      PruebaEnfermedad[]      // 
@@ -74,11 +73,8 @@ model Sintoma {
 model Diagnostico {
   id           Int      @id @default(autoincrement())
   pacienteId   Int
-  enfermedadId Int
   created_at   DateTime @default(now())
-
   paciente     Paciente    @relation(fields: [pacienteId], references: [id])
-  enfermedad   Enfermedad  @relation(fields: [enfermedadId], references: [id])
 }
 
 model Resultado {
@@ -87,8 +83,6 @@ model Resultado {
   pruebaId     Int
   valor        String
   created_at   DateTime @default(now())
-  observaciones String?
-
   paciente     Paciente         @relation(fields: [pacienteId], references: [id])
   prueba       Prueba         @relation(fields: [pruebaId], references: [id])
 }
@@ -100,7 +94,6 @@ model Historial {
   userId       Int
   created_at DateTime @default(now())
   observaciones String?
-
   paciente     Paciente @relation(fields: [pacienteId], references: [id])
   user         User     @relation(fields: [userId], references: [id])
 }

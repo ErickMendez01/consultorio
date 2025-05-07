@@ -21,6 +21,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination"
+
 export function AssignDiseas({
   id,
   isOpen,
@@ -33,7 +34,7 @@ export function AssignDiseas({
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
-  const [itemsPerPage, setItemsPerPage] = useState(10)
+  const [itemsPerPage, setItemsPerPage] = useState(5)
   const [diseases, setDiseases] = useState<{ id: number; nombre: string }[]>([])
   const [selectedDiseases, setSelectedDiseases] = useState<number[]>([])
   const [totalPages, setTotalPages] = useState(1)
@@ -49,6 +50,7 @@ export function AssignDiseas({
 
         const data = await response.json()
         setDiseases(data.diseases)
+        setTotalPages(Math.ceil(data.total / itemsPerPage)) // ✅ Lógica corregida aquí
       } catch (error: any) {
         setError(error.message)
       } finally {
@@ -95,7 +97,7 @@ export function AssignDiseas({
 
       toast({
         title: "Enfermedades asignadas",
-        description: "Se asignaron correctamente al sintoma.",
+        description: "Se asignaron correctamente al síntoma.",
       })
 
       setIsOpen(false)
@@ -106,7 +108,6 @@ export function AssignDiseas({
       setLoading(false)
     }
   }
-
 
   const handlePageChange = (page: number) => {
     if (page !== currentPage) {
@@ -120,33 +121,34 @@ export function AssignDiseas({
         <DialogHeader>
           <DialogTitle>Asignar a enfermedad</DialogTitle>
           <DialogDescription>
-            Selecciona una o varias enfermedades para asignar al sintoma.
+            Selecciona una o varias enfermedades para asignar al síntoma.
           </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit}>
           <div className="grid max-h-60 gap-4 overflow-y-auto py-2 pr-2">
-          {loading ? (
-            <p className="text-sm text-gray-500">Cargando enfermedades...</p>
-          ) : diseases.length === 0 ? (
-            <p className="text-sm text-gray-500">
-              No hay enfermedades disponibles.
-            </p>
-          ) : (
-            diseases.map((disease) => (
-              <div key={disease.id} className="flex items-center space-x-2">
-                <Checkbox
-                  id={`disease-${disease.id}`}
-                  checked={selectedDiseases.includes(disease.id)}
-                  onCheckedChange={() => toggleDiseaseSelection(disease.id)}
-                />
-                <Label htmlFor={`disease-${disease.id}`}>
-                  {disease.nombre}
-                </Label>
-              </div>
-            ))
-          )}
+            {loading ? (
+              <p className="text-sm text-gray-500">Cargando enfermedades...</p>
+            ) : diseases.length === 0 ? (
+              <p className="text-sm text-gray-500">
+                No hay enfermedades disponibles.
+              </p>
+            ) : (
+              diseases.map((disease) => (
+                <div key={disease.id} className="flex items-center space-x-2">
+                  <Checkbox
+                    id={`disease-${disease.id}`}
+                    checked={selectedDiseases.includes(disease.id)}
+                    onCheckedChange={() => toggleDiseaseSelection(disease.id)}
+                  />
+                  <Label htmlFor={`disease-${disease.id}`}>
+                    {disease.nombre}
+                  </Label>
+                </div>
+              ))
+            )}
           </div>
+
           <div className="mt-4">
             <Pagination>
               <PaginationContent>
@@ -190,7 +192,10 @@ export function AssignDiseas({
           </div>
 
           <DialogFooter>
-            <Button type="submit" disabled={loading || selectedDiseases.length === 0}>
+            <Button
+              type="submit"
+              disabled={loading || selectedDiseases.length === 0}
+            >
               {loading ? "Asignando..." : "Asignar"}
             </Button>
           </DialogFooter>

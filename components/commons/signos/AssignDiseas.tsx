@@ -34,7 +34,7 @@ export function AssignDiseas({
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
-  const [itemsPerPage, setItemsPerPage] = useState(10)
+  const [itemsPerPage, setItemsPerPage] = useState(5)
   const [diseases, setDiseases] = useState<{ id: number; nombre: string }[]>([])
   const [selectedDiseases, setSelectedDiseases] = useState<number[]>([])
   const [totalPages, setTotalPages] = useState(1)
@@ -50,6 +50,7 @@ export function AssignDiseas({
 
         const data = await response.json()
         setDiseases(data.diseases)
+        setTotalPages(Math.ceil(data.total / itemsPerPage)) // 🔧 Corregido aquí
       } catch (error: any) {
         setError(error.message)
       } finally {
@@ -107,6 +108,7 @@ export function AssignDiseas({
       setLoading(false)
     }
   }
+
   const handlePageChange = (page: number) => {
     if (page !== currentPage) {
       setCurrentPage(page)
@@ -123,7 +125,6 @@ export function AssignDiseas({
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
-          <div className="grid max-h-60 gap-4 overflow-y-auto py-2 pr-2"></div>
           {loading ? (
             <p className="text-sm text-gray-500">Cargando enfermedades...</p>
           ) : diseases.length === 0 ? (
@@ -131,7 +132,7 @@ export function AssignDiseas({
               No hay enfermedades disponibles.
             </p>
           ) : (
-            <div>
+            <div className="grid max-h-60 gap-4 overflow-y-auto py-2 pr-2">
               {diseases.map((disease) => (
                 <div key={disease.id} className="flex items-center space-x-2">
                   <Checkbox
@@ -146,6 +147,7 @@ export function AssignDiseas({
               ))}
             </div>
           )}
+
           <div className="mt-4">
             <Pagination>
               <PaginationContent>
@@ -187,6 +189,7 @@ export function AssignDiseas({
               </PaginationContent>
             </Pagination>
           </div>
+
           <DialogFooter>
             <Button
               type="submit"
@@ -201,3 +204,4 @@ export function AssignDiseas({
     </Dialog>
   )
 }
+

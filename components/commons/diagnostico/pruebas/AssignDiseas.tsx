@@ -34,7 +34,7 @@ export function AssignDiseas({
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
-  const [itemsPerPage, setItemsPerPage] = useState(10)
+  const [itemsPerPage, setItemsPerPage] = useState(5)
   const [diseases, setDiseases] = useState<{ id: number; nombre: string }[]>([])
   const [selectedDiseases, setSelectedDiseases] = useState<number[]>([])
   const [totalPages, setTotalPages] = useState(1)
@@ -50,6 +50,7 @@ export function AssignDiseas({
 
         const data = await response.json()
         setDiseases(data.diseases)
+        setTotalPages(Math.ceil(data.total / itemsPerPage))
       } catch (error: any) {
         setError(error.message)
       } finally {

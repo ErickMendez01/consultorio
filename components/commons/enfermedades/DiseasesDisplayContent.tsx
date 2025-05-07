@@ -40,7 +40,7 @@ type CompleteDiseases = Enfermedad & {
 export default function DiseasesDisplayContent() {
   const [filterName, setFilterName] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
-  const [itemsPerPage, setItemsPerPage] = useState(10)
+  const [itemsPerPage, setItemsPerPage] = useState(5)
   const [diseases, setDiseases] = useState<CompleteDiseases[]>([])
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(true)
