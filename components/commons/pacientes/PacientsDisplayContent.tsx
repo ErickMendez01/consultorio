@@ -19,12 +19,19 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination"
-import { Paciente } from "@prisma/client"
+import { Paciente, Signo, Sintoma } from "@prisma/client"
 import PacientsMoreOptionsButton from "./PacientsMoreOptionsButton"
 import { Button } from "@/components/ui/button"
 import { MoreHorizontal } from "lucide-react"
 
-type CompletePacient = Paciente
+type CompletePacient = Paciente & {
+   signos: {
+      signo: Signo
+    }[]
+    sintomas: {
+      sintoma: Sintoma
+    }[]
+}
 
 export default function PacientsDisplayContent() {
   const [filterName, setFilterName] = useState("")

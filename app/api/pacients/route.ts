@@ -30,6 +30,18 @@ export async function GET(
     }
     const pacients = await db.paciente.findMany({
       where,
+      include: {
+        signos: {
+          include: {
+            signo: true
+          }
+        },
+        sintomas: {
+          include: {
+            sintoma: true
+          }
+        },
+      },
       skip: (Number(page) - 1) * Number(itemsPerPage),
       take: Number(itemsPerPage),
     })
